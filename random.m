@@ -1,2 +1,3 @@
 function output = random(start, last)
-    output = floor(start+(last*rand));
+   output= floor(start + (last - start)*rand);
+
