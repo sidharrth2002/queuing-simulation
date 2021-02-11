@@ -74,7 +74,7 @@ function p = main()
     x=5;
         while( i< x)
          if rchooser == 1 
-             st2(i)=random(3,9);
+            st2(i)=random(3,9);
          elseif rchooser == 2
             st2(i)= LCG(3,9);
          else 
@@ -185,21 +185,9 @@ function p = main()
             
         else  %temp allowed 
 
-            %counters switching
-            if t > 1
-                if arrivaltime(t) >=  timeServiceE1(t-1) 
-                    counter1check=0;
-                else
-                    counter1check=1; 
-                end
             
-                if arrivaltime(t) >=  timeServiceE2(t-1) 
-                    counter2check=0;
-                else
-                    counter2check=1;
+            if t > 1
 
-                end
-                
                 %number of customers in center
                 cin=0;
                 carrivaltime = arrivaltime(t);
@@ -214,17 +202,38 @@ function p = main()
                 customersInCenter(t)=cin;
                 
                 % check max customers
-                if cin <= maxc
+                if cin < maxc
                      timeEnteringCenter(t)=arrivaltime(t);
                 else
-                    if lastendtime1 <= lastendtime2
-                         timeEnteringCenter(t)=lastendtime1;
-                    else
-                        timeEnteringCenter(t)=lastendtime2;
-                    end
+                    if lastendtime1 > 0 & lastendtime2 == 0
+                            timeEnteringCenter(t)=lastendtime1;
+                    elseif lastendtime2 > 0 & lastendtime1 == 0
+                            timeEnteringCenter(t)=lastendtime2;
+                     elseif lastendtime2 > 0 & lastendtime1 > 0
+                         if  lastendtime1 <= lastendtime2
+                             timeEnteringCenter(t)=lastendtime1;
+                         else
+                              timeEnteringCenter(t)=lastendtime2;
+                         end
+                    end 
+                end
+                
+                %counters switching
+                if timeEnteringCenter(t) >=  timeServiceE1(t-1) 
+                    counter1check=0;
+                else
+                    counter1check=1; 
+                end
+            
+                if timeEnteringCenter(t) >=  timeServiceE2(t-1) 
+                    counter2check=0;
+                else
+                    counter2check=1;
+
                 end
                                     
             end
+            
 
             %random number for servicetime
             if rchooser == 1 
@@ -242,12 +251,12 @@ function p = main()
                 %service time:
                 for u=1:x-1
                     if randomServiceTime(t) >= startrange1(u) & randomServiceTime(t) <= endrange1(u)%counter 1 is assigned
-                        servicetime1(t) = u;
+                        servicetime1(t) = st1(u);
                     end      
                 end
                 servicetime2(t) = 0;
                 %time service begins:
-                timeServiceB1(t)=arrivaltime(t);
+                timeServiceB1(t)=timeEnteringCenter(t);
                 timeServiceB2(t)=0;
                 %time service ends:
                 timeServiceE1(t)=timeServiceB1(t) + servicetime1(t); % breaks
@@ -259,14 +268,14 @@ function p = main()
 
 
             elseif  counter1check == 1 & counter2check == 0 %1 full 2 free
-                for u=1:x-1
+                for u=1:x
                     if randomServiceTime(t) >= startrange2(u) & randomServiceTime(t) <= endrange2(u) %counter 2 is assigned
-                        servicetime2(t) = u;
+                        servicetime2(t) = st2(u);
                     end      
                 end
                 servicetime1(t) = 0;
                 %time service begins:
-                timeServiceB2(t)=arrivaltime(t);
+                timeServiceB2(t)=timeEnteringCenter(t);
                 timeServiceB1(t)=0;
                 %time service ends:
                 timeServiceE2(t)=timeServiceB2(t)+ servicetime2(t); % breaks
@@ -278,9 +287,9 @@ function p = main()
            
             elseif  counter1check == 1 & counter2check == 1 %both full
                 if lastendtime1 < lastendtime2 %counter 1 will finish first
-                    for u=1:x-1
+                    for u=1:x
                         if randomServiceTime(t) >= startrange1(u) & randomServiceTime(t) <= endrange1(u) %counter 1 is assigned
-                            servicetime1(t) = u;
+                            servicetime1(t) = st1(u);
                         end      
                     end
                     servicetime2(t) = 0;
@@ -296,9 +305,9 @@ function p = main()
                     
     
                 else %counter 2 will finish first
-                    for u=1:x-1
+                    for u=1:x
                         if randomServiceTime(t) >= startrange2(u) & randomServiceTime(t) <= endrange2(u) %counter 2 is assigned
-                            servicetime2(t) = u;
+                            servicetime2(t) = st2(u);
                         end      
                     end
                     servicetime1(t) = 0;
