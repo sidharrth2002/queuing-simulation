@@ -97,7 +97,6 @@ function p = main()
 
     
     
-    
     %Main Table:
     lastendtime1=0;
     lastendtime2=0;
@@ -107,7 +106,11 @@ function p = main()
     counter2check=0;
     
 
+    
+
     while( t<= n)
+        %final print
+        printcheck(t)=0;
         % set zeros for all arrays:
         randomIntervalTime(t)=0;
         interarrivaltime(t)=0;
@@ -128,14 +131,23 @@ function p = main()
  
         waitingTime(t)=0;
         timeSpent(t)=0;
+        
+         %summary arrays:
+        sat(t)=0;
+        sint(t)=0;
+        sendt(t)=0;
+        stemp(t)=0;
 
         %set values:
         if rchooser == 1 
              temp(t)=random(35, 42);
+             stemp(t)= temp(t);
         elseif rchooser == 2
             temp(t)= LCG(35, 42);
+            stemp(t)= temp(t);
         else 
             temp(t)= randomVariate(35, 42);
+            stemp(t)= temp(t);
         end
 
         if rchooser == 1 
@@ -159,8 +171,11 @@ function p = main()
          
         %arrival time
         arrivaltime(1)=0;
+        sat(1)= arrivaltime(1);
         if t > 1
             arrivaltime(t) =  arrivaltime(t-1) + interarrivaltime(t); % breaks
+            sat(t)= arrivaltime(t);
+            
         end
 
         
@@ -181,6 +196,8 @@ function p = main()
  
             waitingTime(t)=0;
             timeSpent(t)=0;
+            sendt(t)=0;
+            sint(t)=0;
 
             
         else  %temp allowed 
@@ -204,16 +221,21 @@ function p = main()
                 % check max customers
                 if cin < maxc
                      timeEnteringCenter(t)=arrivaltime(t);
+                     sint(t)=timeEnteringCenter(t);
                 else
                     if lastendtime1 > 0 & lastendtime2 == 0
                             timeEnteringCenter(t)=lastendtime1;
+                             sint(t)=timeEnteringCenter(t);
                     elseif lastendtime2 > 0 & lastendtime1 == 0
                             timeEnteringCenter(t)=lastendtime2;
+                             sint(t)=timeEnteringCenter(t);
                      elseif lastendtime2 > 0 & lastendtime1 > 0
                          if  lastendtime1 <= lastendtime2
                              timeEnteringCenter(t)=lastendtime1;
+                              sint(t)=timeEnteringCenter(t);
                          else
                               timeEnteringCenter(t)=lastendtime2;
+                               sint(t)=timeEnteringCenter(t);
                          end
                     end 
                 end
@@ -260,6 +282,7 @@ function p = main()
                 timeServiceB2(t)=0;
                 %time service ends:
                 timeServiceE1(t)=timeServiceB1(t) + servicetime1(t); % breaks
+                sendt(t)=timeServiceE1(t);
                 lastendtime1=timeServiceE1(t);
                 timeServiceE2(t)=0;
                 waitingTime(t)=0;
@@ -279,6 +302,7 @@ function p = main()
                 timeServiceB1(t)=0;
                 %time service ends:
                 timeServiceE2(t)=timeServiceB2(t)+ servicetime2(t); % breaks
+                 sendt(t)=timeServiceE2(t);
                 lastendtime2=timeServiceE2(t);
                 timeServiceE1(t)=0;
                 waitingTime(t)=0;
@@ -298,10 +322,12 @@ function p = main()
                     timeServiceB2(t)=0;
                     %time service ends:
                     timeServiceE1(t)=lastendtime1 + servicetime1(t);
+                    sendt(t)=timeServiceE1(t);
                     timeServiceE2(t)=0;
                     waitingTime(t)=lastendtime1-arrivaltime(t);
                     timeSpent(t) = timeServiceE1(t) - arrivaltime(t);
                     lastendtime1= timeServiceE1(t);
+     
                     
     
                 else %counter 2 will finish first
@@ -316,6 +342,7 @@ function p = main()
                     timeServiceB1(t)=0;
                     %time service ends:
                     timeServiceE2(t)=lastendtime2 + servicetime2(t);
+                     sendt(t)=timeServiceE2(t);
                     timeServiceE1(t)=0;
                     waitingTime(t)=lastendtime2-arrivaltime(t);
                     timeSpent(t) = timeServiceE2(t) - arrivaltime(t);
@@ -325,7 +352,11 @@ function p = main()
 
             end
        end
-   
+               disp('arrival t ');
+               disp(sat(t));
+               disp('in center t ');
+               disp(sint(t));
+       
         t= t+1;
     end 
 
@@ -339,3 +370,24 @@ function p = main()
     for j=1:n
         fprintf('%2.0f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n', [j  servicetime1(j) timeServiceB1(j) timeServiceE1(j) servicetime2(j) timeServiceB2(j) timeServiceE2(j)  waitingTime(j)  timeSpent(j) ]);
     end 
+    
+    
+    %summary print:
+    for j=1:n
+        if j > 1 % not first iteration
+            for y=1:j-1
+                    if sat(j) >= sendt(y) & stemp(y) < 38 & printcheck(y) == 0
+                        fprintf('Departure of Customer %10.3f at minute %10.3f\n', [y sendt(y)]);      
+                        printcheck(y) = printcheck(y)+1;
+                    end
+            end
+       end
+       if stemp(j) >= 38 % temp not allowed
+           fprintf('Customer %10.3f arrived at minute %10.3f but temperature is  %10.3f ,not allowed endingtime %10.3f %10.3f\n', [j sat(j) stemp(j) sendt(j) printcheck(j)]);
+       else  % temp is allowed
+           fprintf('Customer %10.3f arrived at minute %10.3f and entered the centre at minute at  %10.3f left at %10.3f %10.3f\n', [j sat(j) sint(j) sendt(j) printcheck(j)]);
+       end
+
+    end
+    
+
