@@ -421,10 +421,51 @@ function p = main()
         fprintf('%2.0f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n', [j  servicetime1(j) timeServiceB1(j) timeServiceE1(j) servicetime2(j) timeServiceB2(j) timeServiceE2(j)  waitingTime(j)  timeSpent(j) ]);
     end 
     
-    %Summary print:
-    disp('Simulation Results');
+    printf('\n');
     printf('\n');
     
+    %Simulation Results:
+    disp('Simulation Results:');
+    printf('\n');
+    totalwt=0;
+    totalts=0;
+    totalst1=0;
+    allowedc1=0;
+    totalst2=0;
+    allowedc2=0;
+    allowedc=0;
+    wtc=0;
+    for j=1:n
+            if temp(j) < 38
+                %total waiting time:
+                totalwt =  totalwt + waitingTime(j);  
+                %total time spent:
+                totalts = totalts + timeSpent(j);
+                allowedc = allowedc+1;
+                
+                %Probability:
+                if  waitingTime(j) > 0 
+                    wtc = wtc+1;
+                end
+                
+                %total service time:
+                if servicetime1(j) ~=0
+                     totalst1=totalst1 + servicetime1(j);
+                     allowedc1= allowedc1 + 1;
+                elseif servicetime2(j) ~=0
+                    totalst2=totalst2 + servicetime2(j);
+                    allowedc2= allowedc2 + 1;
+                end
+            end  
+    end
+    
+
+        fprintf('Average waiting time:%10.3f\n', [totalwt/allowedc]);
+        fprintf('Average TimeSpent:%10.3f\n', [totalts/allowedc]);
+        fprintf('Probabilty Customers has to wait:%10.3f\n', [wtc/allowedc]);
+        fprintf('Average Service time for Counter 1:%10.3f\n', [totalst1/allowedc1]);
+        fprintf('Average Service time for Counter 2:%10.3f\n', [totalst2/allowedc2]);
+
 
     
 
