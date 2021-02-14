@@ -1,5 +1,10 @@
 function p = main()
     % take input to choose generator
+    printf('\n');
+    printf('\n');
+    
+    disp('Welcome to Queuing Simulation');
+    printf('\n');
     disp('Please select a randomiser generator:');
     disp('1-Standard Generator');
     disp('2-Linear Congruential Generator ');
@@ -7,6 +12,10 @@ function p = main()
     rchooser = input('input: ');
     n = input('Number of cutomers for simulation: ');% take input n customers
     maxc = input('Max customers allowed: '); % take input max customers allowed
+    
+    printf('\n');
+    printf('\n');
+
     
     
     %InterArrival Table:
@@ -28,10 +37,16 @@ function p = main()
          endrange(i)= endrange(i-1) +  incendrange;
          i= i+1;
     end 
-    disp('j iat prob cdf startrange endrange');
+    disp('InterArrival Time:');
+    printf('\n');
+    printf(' j      iat        prob       cdf     startrange   endrange \n');
     for j=1:5
         fprintf('%2.0f %10.3f %10.3f %10.3f %10.3f %10.3f\n', [j iat(j) prob(j) cdf(j) startrange(j) endrange(j)]);
     end 
+    
+    printf('\n');
+    printf('\n');
+
 
     %Counter 1 service time:
     i= 1;
@@ -57,11 +72,16 @@ function p = main()
          i= i+1;
     end 
         
-    disp('Counter 1:');
-    disp('j st prob cdf startrange endrange');
+    disp('Counter 1 Service Time:');
+    printf('\n');
+    printf(' j      st        prob        cdf     startrange   endrange \n');
     for j=1:x-1
         fprintf('%2.0f %10.3f %10.3f %10.3f %10.3f %10.3f\n', [j st1(j) prob1(j) cdf1(j) startrange1(j) endrange1(j)]);
     end 
+    
+    printf('\n');
+    printf('\n');
+
     
     
     %Counter 2 service time:
@@ -87,13 +107,16 @@ function p = main()
          i= i+1;
     end 
         
-    disp('Counter 2:');
-    disp('j st prob cdf startrange endrange');
+    disp('Counter 2 Service Time:');
+    printf('\n');
+    printf(' j      st        prob        cdf     startrange   endrange \n');
     for j=1:x-1
         fprintf('%2.0f %10.3f %10.3f %10.3f %10.3f %10.3f\n', [j st2(j) prob2(j) cdf2(j) startrange2(j) endrange2(j)]);
     end 
 
 
+    printf('\n');
+    printf('\n');
 
     
     
@@ -352,42 +375,56 @@ function p = main()
 
             end
        end
-               disp('arrival t ');
-               disp(sat(t));
-               disp('in center t ');
-               disp(sint(t));
-       
         t= t+1;
     end 
 
+
+    printf('\n');
+    printf('\n');
     
-        disp('j temp randomit interarrivaltime arrivaltime customersincenter timeentering randomst');
-    for j=1:n
-        fprintf('%2.0f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n', [j temp(j) randomIntervalTime(j) interarrivaltime(j)  arrivaltime(j) customersInCenter(j) timeEnteringCenter(j) randomServiceTime(j) ]);
-    end 
-    
-            disp('j servicetime1 timeServiceB1 timeServiceE1 servicetime2 timeServiceB2 timeServiceE2  waitingTime  timeSpent');
-    for j=1:n
-        fprintf('%2.0f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n', [j  servicetime1(j) timeServiceB1(j) timeServiceE1(j) servicetime2(j) timeServiceB2(j) timeServiceE2(j)  waitingTime(j)  timeSpent(j) ]);
-    end 
-    
-    
-    %summary print:
+     %Log print:
+    disp('Queuing Log:');
+    printf('\n');
     for j=1:n
         if j > 1 % not first iteration
             for y=1:j-1
                     if sat(j) >= sendt(y) & stemp(y) < 38 & printcheck(y) == 0
-                        fprintf('Departure of Customer %10.3f at minute %10.3f\n', [y sendt(y)]);      
+                        fprintf('Departure of Customer %2.0f at minute %2.0f.\n', [y sendt(y)]);      
                         printcheck(y) = printcheck(y)+1;
                     end
             end
        end
        if stemp(j) >= 38 % temp not allowed
-           fprintf('Customer %10.3f arrived at minute %10.3f but temperature is  %10.3f ,not allowed endingtime %10.3f %10.3f\n', [j sat(j) stemp(j) sendt(j) printcheck(j)]);
+           fprintf('Customer %2.0f arrived at minute %2.0f but temperature is  %2.0f, not allowed!\n', [j sat(j) stemp(j)]);
        else  % temp is allowed
-           fprintf('Customer %10.3f arrived at minute %10.3f and entered the centre at minute at  %10.3f left at %10.3f %10.3f\n', [j sat(j) sint(j) sendt(j) printcheck(j)]);
+           fprintf('Customer %2.0f arrived at minute %2.0f and entered the centre at minute %2.0f.\n', [j sat(j) sint(j)]);
        end
 
     end
+    
+
+    printf('\n');
+    printf('\n');
+
+     %Table print:
+    disp('Tracker Table:');
+    printf('\n');
+     
+    disp(' j     temp     randomit      iat       at         incenter   enteringt  randomst');
+    for j=1:n
+        fprintf('%2.0f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n', [j temp(j) randomIntervalTime(j) interarrivaltime(j)  arrivaltime(j) customersInCenter(j) timeEnteringCenter(j) randomServiceTime(j) ]);
+    end 
+        printf('\n');
+    disp('        |        Counter 1         |     |        Counter 2         |');
+    disp(' j      st1       tsB1       tsE1        st2        tsB2       tsE2       waitingt   timeSpent');
+    for j=1:n
+        fprintf('%2.0f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n', [j  servicetime1(j) timeServiceB1(j) timeServiceE1(j) servicetime2(j) timeServiceB2(j) timeServiceE2(j)  waitingTime(j)  timeSpent(j) ]);
+    end 
+    
+    %Summary print:
+    disp('Simulation Results');
+    printf('\n');
+    
+
     
 
