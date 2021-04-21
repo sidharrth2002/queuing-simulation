@@ -5,4 +5,9 @@ This would probably attract a lot of clones, especially from those taking the co
 but by simply copying, you are only cheating yourself.
 That said, I hope this helps.
 
-The main function is in main.m. The other files are utility functions. The source code can be compiled in either MATLAB, Freemat or any similar alternative that opens `.m` files.
+The main function is in main.m. The other files are utility functions. The source code can be compiled in either MATLAB, Freemat or any similar alternative that opens `.m` files. 
+
+Three randomisers have been used, while giving users the option to choose a randomiser for the simulation:
+1) LCG- Linear Congruential Generator
+2) Random Variate
+3) Uniform Random
